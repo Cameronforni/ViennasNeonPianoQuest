@@ -129,29 +129,37 @@
 
   /* ===== PIANO ===== */
   .piano-container {
-    display: flex; justify-content: center; gap: 6px; padding: 12px;
-    background: rgba(0,0,0,0.3); border-radius: 20px; margin-top: auto;
-    width: 100%; max-width: 800px;
+    display: flex; justify-content: center; padding: 0;
+    background: rgba(0,0,0,0.4); border-radius: 0 0 20px 20px;
+    width: 100%; max-width: 900px; position: relative; z-index: 3;
   }
+  /* White keys */
   .piano-key {
-    width: clamp(60px, 12vw, 100px); height: 160px;
-    border-radius: 14px; display: flex; flex-direction: column;
-    align-items: center; justify-content: flex-end; padding-bottom: 16px;
-    gap: 6px; cursor: pointer; transition: transform 0.1s, box-shadow 0.15s;
-    border: none; font-family: 'Nunito', sans-serif;
-    background: linear-gradient(180deg, #fff, #f0f0f0);
-    position: relative;
+    flex: 1; max-width: 70px; height: 140px;
+    border-radius: 0 0 10px 10px; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end; padding-bottom: 10px;
+    gap: 4px; cursor: pointer; transition: transform 0.1s, box-shadow 0.15s;
+    border: 1px solid rgba(0,0,0,0.1); border-top: none;
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #fff, #eee);
+    position: relative; z-index: 1;
   }
-  .piano-key:active, .piano-key.pressed {
-    transform: scale(0.93);
-  }
-  .piano-key .dot {
-    width: 18px; height: 18px; border-radius: 50%;
-  }
-  .piano-key .label {
-    font-size: 24px; font-weight: 900;
-  }
+  .piano-key:active, .piano-key.pressed { transform: scaleY(0.96); transform-origin: top; }
+  .piano-key .dot { width: 14px; height: 14px; border-radius: 50%; }
+  .piano-key .label { font-size: 13px; font-weight: 900; }
+  .piano-key .octave-label { font-size: 9px; font-weight: 700; opacity: 0.5; }
   .piano-key.pressed .label { color: white !important; }
+  /* Black keys */
+  .piano-key.black {
+    max-width: 40px; height: 90px; background: linear-gradient(180deg, #222, #000);
+    border-radius: 0 0 6px 6px; margin: 0 -18px; z-index: 2;
+    border: 1px solid #000;
+  }
+  .piano-key.black .label { color: #aaa; font-size: 10px; }
+  .piano-key.black .dot { width: 10px; height: 10px; }
+  .piano-key.black.pressed {
+    background: linear-gradient(180deg, var(--nc), #111) !important;
+  }
 
   /* per-note colours */
   .key-C  { --nc: #ff1493; } .key-C .dot { background: #ff1493; } .key-C .label { color: #ff1493; }
@@ -175,23 +183,28 @@
     to   { box-shadow: 0 0 30px var(--nc), 0 0 50px color-mix(in srgb, var(--nc) 40%, transparent); }
   }
 
-  /* ===== GAME AREA ===== */
+  /* ===== GAME WRAPPER: area + piano flush together ===== */
+  .game-wrapper {
+    width: 100%; max-width: 900px; display: flex; flex-direction: column;
+    align-items: stretch; flex: 1; position: relative;
+  }
   #game-area {
-    width: 100%; max-width: 800px; height: 380px; position: relative;
-    overflow: hidden; border-radius: 16px;
-    background: rgba(0,0,0,0.2);
+    flex: 1; position: relative; overflow: hidden;
+    border-radius: 16px 16px 0 0;
+    background: rgba(0,0,0,0.2); min-height: 200px;
   }
   .hit-line {
-    position: absolute; bottom: 40px; left: 0; right: 0; height: 4px;
+    position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
     background: linear-gradient(90deg, var(--hot-pink), var(--purple), var(--neon-blue), var(--cyan), var(--gold));
-    border-radius: 2px; box-shadow: 0 0 12px var(--hot-pink);
+    border-radius: 2px; box-shadow: 0 0 12px var(--hot-pink); z-index: 2;
   }
   .note-bubble {
     position: absolute; width: 52px; height: 52px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px; font-weight: 900; color: white;
+    font-size: 18px; font-weight: 900; color: white;
     border: 2px solid rgba(255,255,255,0.5);
     transition: none; pointer-events: none;
+    transform: translateX(-50%);
   }
   .note-bubble::before {
     content: ''; position: absolute; inset: -8px; border-radius: 50%;
@@ -277,10 +290,10 @@
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 600px) {
-    .piano-key { width: 44px; height: 120px; }
-    .piano-key .label { font-size: 18px; }
-    #game-area { height: 280px; }
-    .note-bubble { width: 40px; height: 40px; font-size: 16px; }
+    .piano-key { height: 110px; }
+    .piano-key.black { height: 70px; }
+    .piano-key .label { font-size: 11px; }
+    .note-bubble { width: 38px; height: 38px; font-size: 14px; }
   }
 </style>
 </head>
@@ -330,13 +343,14 @@
 <div id="game" class="screen">
   <button class="btn-back" onclick="endGameEarly()">← Back</button>
   <div class="score-display">⭐ <span id="game-score">0</span></div>
-  <div style="height: 48px"></div>
-  <div id="level-title" style="font-size: 18px; font-weight: 800; color: var(--bubblegum);"></div>
-  <div style="height: 8px"></div>
-  <div id="game-area">
-    <div class="hit-line"></div>
+  <div style="height: 40px"></div>
+  <div id="level-title" style="font-size: 16px; font-weight: 800; color: var(--bubblegum);"></div>
+  <div class="game-wrapper">
+    <div id="game-area">
+      <div class="hit-line"></div>
+    </div>
+    <div id="game-piano" class="piano-container"></div>
   </div>
-  <div id="game-piano" class="piano-container"></div>
 </div>
 
 <!-- ===== FREE PLAY ===== -->
@@ -383,34 +397,58 @@
 <script>
 // ===== AUDIO ENGINE (Web Audio API) =====
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const NOTE_FREQS = { C: 261.63, D: 293.66, E: 329.63, F: 349.23, G: 392.00, A: 440.00, B: 493.88 };
-const NOTE_COLORS = { C:'#ff1493', D:'#ff69b4', E:'#b000ff', F:'#00ffff', G:'#0080ff', A:'#d900ff', B:'#ffd700' };
+
+// Full chromatic frequencies for octaves 3-5
+const CHROMATIC = {
+  'C3':130.81,'C#3':138.59,'D3':146.83,'D#3':155.56,'E3':164.81,'F3':174.61,'F#3':185.00,'G3':196.00,'G#3':207.65,'A3':220.00,'A#3':233.08,'B3':246.94,
+  'C4':261.63,'C#4':277.18,'D4':293.66,'D#4':311.13,'E4':329.63,'F4':349.23,'F#4':369.99,'G4':392.00,'G#4':415.30,'A4':440.00,'A#4':466.16,'B4':493.88,
+  'C5':523.25,'C#5':554.37,'D5':587.33,'D#5':622.25,'E5':659.26,'F5':698.46,'F#5':739.99,'G5':783.99,'G#5':830.61,'A5':880.00,'A#5':932.33,'B5':987.77,
+  'C6':1046.50
+};
+
+// Note colors by letter name (same color regardless of octave)
+const NOTE_COLORS = { C:'#ff1493','C#':'#ff1493',D:'#ff69b4','D#':'#ff69b4',E:'#b000ff',F:'#00ffff','F#':'#00ffff',G:'#0080ff','G#':'#0080ff',A:'#d900ff','A#':'#d900ff',B:'#ffd700' };
+
+// Keys for a full 2-octave piano (C4 to B5) — white and black
+const PIANO_KEYS = [
+  {note:'C4',label:'C',black:false},{note:'C#4',label:'C#',black:true},
+  {note:'D4',label:'D',black:false},{note:'D#4',label:'D#',black:true},
+  {note:'E4',label:'E',black:false},
+  {note:'F4',label:'F',black:false},{note:'F#4',label:'F#',black:true},
+  {note:'G4',label:'G',black:false},{note:'G#4',label:'G#',black:true},
+  {note:'A4',label:'A',black:false},{note:'A#4',label:'A#',black:true},
+  {note:'B4',label:'B',black:false},
+  {note:'C5',label:'C',black:false},{note:'C#5',label:'C#',black:true},
+  {note:'D5',label:'D',black:false},{note:'D#5',label:'D#',black:true},
+  {note:'E5',label:'E',black:false},
+  {note:'F5',label:'F',black:false},{note:'F#5',label:'F#',black:true},
+  {note:'G5',label:'G',black:false},{note:'G#5',label:'G#',black:true},
+  {note:'A5',label:'A',black:false},{note:'A#5',label:'A#',black:true},
+  {note:'B5',label:'B',black:false},
+];
+
+// Game uses simple names like 'C','D','E' — map to octave 4
 const ALL_NOTES = ['C','D','E','F','G','A','B'];
+function gameNoteToKey(n) { return n + '4'; } // game note 'C' → 'C4'
+function letterOf(n) { return n.replace(/[0-9]/g,''); }
 
-function playNote(note) {
+function playNote(noteId) {
   if (audioCtx.state === 'suspended') audioCtx.resume();
-  const freq = NOTE_FREQS[note];
+  const freq = CHROMATIC[noteId] || CHROMATIC[noteId+'4'] || 440;
   const now = audioCtx.currentTime;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  const osc2 = audioCtx.createOscillator();
-  const gain2 = audioCtx.createGain();
-
-  osc.type = 'sine'; osc.frequency.value = freq;
-  osc2.type = 'sine'; osc2.frequency.value = freq * 2;
-
-  gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(0.35, now + 0.01);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
-
-  gain2.gain.setValueAtTime(0, now);
-  gain2.gain.linearRampToValueAtTime(0.15, now + 0.01);
-  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
-
-  osc.connect(gain).connect(audioCtx.destination);
-  osc2.connect(gain2).connect(audioCtx.destination);
-  osc.start(now); osc.stop(now + 1.3);
-  osc2.start(now); osc2.stop(now + 0.9);
+  // 3 harmonics for richer piano sound
+  const harmonics = [[1, 0.4], [2, 0.15], [3, 0.06]];
+  for (const [mult, amp] of harmonics) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq * mult;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(amp, now + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0 / mult);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + 1.2);
+  }
 }
 
 // ===== SPARKLE CANVAS =====
@@ -451,7 +489,7 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if (id === 'levels') buildLevelSelect();
-  if (id === 'freeplay') buildPiano('freeplay-piano', ALL_NOTES, handleFreePlayTap);
+  if (id === 'freeplay') buildFullPiano('freeplay-piano', handleFreePlayTap);
   if (id === 'stickers') buildStickers();
   if (id === 'home') updateHomeStars();
 }
@@ -506,19 +544,46 @@ function buildLevelSelect() {
 }
 
 // ===== PIANO BUILDER =====
-function buildPiano(containerId, notes, callback) {
+// Full piano: builds white + black keys for 2 octaves
+function buildFullPiano(containerId, callback) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
-  notes.forEach(note => {
+  PIANO_KEYS.forEach(k => {
     const key = document.createElement('button');
-    key.className = `piano-key key-${note}`;
-    key.dataset.note = note;
-    key.innerHTML = `<div class="dot"></div><div class="label">${note}</div>`;
+    const letter = letterOf(k.note);
+    key.className = `piano-key key-${letter.replace('#','s')}${k.black ? ' black' : ''}`;
+    key.dataset.note = k.note;
+    key.style.setProperty('--nc', NOTE_COLORS[letter] || '#fff');
+    const oct = k.note.slice(-1);
+    key.innerHTML = `<div class="dot" style="background:${NOTE_COLORS[letter]}"></div><div class="label">${k.label}</div>${!k.black ? `<div class="octave-label">${oct}</div>` : ''}`;
     key.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       key.classList.add('pressed');
-      playNote(note);
-      callback(note);
+      playNote(k.note);
+      callback(k.note);
+      setTimeout(() => key.classList.remove('pressed'), 150);
+    });
+    container.appendChild(key);
+  });
+}
+
+// Game piano: only white keys for the level's notes (simple mode for 6-year-old)
+function buildGamePiano(containerId, noteNames, callback) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  noteNames.forEach(n => {
+    const noteId = gameNoteToKey(n);
+    const key = document.createElement('button');
+    key.className = `piano-key key-${n}`;
+    key.dataset.note = n;
+    key.dataset.noteId = noteId;
+    key.style.setProperty('--nc', NOTE_COLORS[n]);
+    key.innerHTML = `<div class="dot" style="background:${NOTE_COLORS[n]}"></div><div class="label" style="color:${NOTE_COLORS[n]}">${n}</div>`;
+    key.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      key.classList.add('pressed');
+      playNote(noteId);
+      callback(n);
       setTimeout(() => key.classList.remove('pressed'), 150);
     });
     container.appendChild(key);
@@ -527,14 +592,15 @@ function buildPiano(containerId, notes, callback) {
 
 // ===== FREE PLAY =====
 const FP_EMOJIS = ['✨','⭐','💖','🌟','🎵','💜','🎶','💫','🦋','🌈'];
-function handleFreePlayTap(note) {
+function handleFreePlayTap(noteId) {
+  const letter = letterOf(noteId);
   const area = document.getElementById('freeplay-sparkle-area');
   const el = document.createElement('div');
   el.className = 'play-sparkle';
   el.textContent = FP_EMOJIS[Math.floor(Math.random() * FP_EMOJIS.length)];
   el.style.left = (20 + Math.random() * 60) + '%';
   el.style.top = (20 + Math.random() * 60) + '%';
-  el.style.color = NOTE_COLORS[note];
+  el.style.color = NOTE_COLORS[letter] || '#fff';
   area.appendChild(el);
   setTimeout(() => el.remove(), 1200);
 }
@@ -594,7 +660,7 @@ function startGame(levelIdx) {
   document.getElementById('level-title').textContent = `${currentLevel.name} — ${currentLevel.stage}`;
   document.getElementById('game-area').querySelectorAll('.note-bubble').forEach(n => n.remove());
 
-  buildPiano('game-piano', currentLevel.notes, handleGameTap);
+  buildGamePiano('game-piano', currentLevel.notes, handleGameTap);
   showScreen('game');
 
   spawnInterval = setInterval(() => {
@@ -618,33 +684,38 @@ function spawnNote(note) {
   const area = document.getElementById('game-area');
   const el = document.createElement('div');
   el.className = 'note-bubble';
-  el.style.background = NOTE_COLORS[note];
+  el.style.background = NOTE_COLORS[note] || '#fff';
   el.textContent = note;
 
-  const noteIdx = currentLevel.notes.indexOf(note);
-  const totalNotes = currentLevel.notes.length;
-  const areaWidth = area.offsetWidth;
-  const x = ((noteIdx + 0.5) / totalNotes) * (areaWidth - 60) + 10;
+  // Align bubble X to the center of the matching piano key
+  const matchKey = document.querySelector(`#game-piano .piano-key[data-note="${note}"]`);
+  const piano = document.getElementById('game-piano');
+  let x = area.offsetWidth / 2; // fallback center
+  if (matchKey && piano) {
+    const keyRect = matchKey.getBoundingClientRect();
+    const areaRect = area.getBoundingClientRect();
+    x = keyRect.left + keyRect.width / 2 - areaRect.left;
+  }
   el.style.left = x + 'px';
   el.style.top = '-60px';
   area.appendChild(el);
 
-  fallingNotes.push({ el, note, y: -60, active: true, hit: false });
+  fallingNotes.push({ el, note, y: -60, x, active: true, hit: false });
 
   // Highlight matching key
   const keys = document.querySelectorAll('#game-piano .piano-key');
   keys.forEach(k => k.classList.remove('highlight'));
-  const matchKey = Array.from(keys).find(k => k.dataset.note === note);
   if (matchKey) matchKey.classList.add('highlight');
 }
 
 function updateGame() {
-  const hitY = document.getElementById('game-area').offsetHeight - 60;
-  const missY = document.getElementById('game-area').offsetHeight + 10;
+  const areaH = document.getElementById('game-area').offsetHeight;
+  const hitY = areaH - 26;   // right at the hit line (bottom of game area)
+  const missY = areaH + 30;  // just past the line
 
   for (const n of fallingNotes) {
     if (!n.active) continue;
-    n.y += 2.8;
+    n.y += 2.2;
     n.el.style.top = n.y + 'px';
 
     if (n.y > missY && !n.hit) {
@@ -661,10 +732,11 @@ function updateGame() {
 }
 
 function handleGameTap(note) {
-  const hitY = document.getElementById('game-area').offsetHeight - 60;
+  const areaH = document.getElementById('game-area').offsetHeight;
+  const hitY = areaH - 26;
   const match = fallingNotes.find(n =>
     n.active && !n.hit && n.note === note &&
-    n.y > hitY - 80 && n.y < hitY + 50
+    n.y > hitY - 100 && n.y < hitY + 40
   );
   if (match) {
     match.hit = true; match.active = false;
