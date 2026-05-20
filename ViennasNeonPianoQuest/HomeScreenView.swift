@@ -52,12 +52,8 @@ struct HomeScreenView: View {
             Text("🎹")
                 .font(.system(size: 48))
 
-            Text("Vienna's")
-                .font(.system(size: 32, weight: .heavy, design: .rounded))
-                .foregroundStyle(NeonGradients.pinkGlow)
-
-            Text("Neon Piano Quest")
-                .font(.system(size: 42, weight: .black, design: .rounded))
+            Text("Vienna's Piano")
+                .font(.system(size: 44, weight: .black, design: .rounded))
                 .foregroundStyle(NeonGradients.rainbow)
                 .shadow(color: NeonColors.hotPink.opacity(0.7), radius: 10)
                 .shadow(color: NeonColors.violet.opacity(0.4), radius: 20)

@@ -147,7 +147,7 @@ struct StickerRoomView: View {
 
                 // Poster title
                 VStack {
-                    Text("⭐ Vienna's Concert ⭐")
+                    Text("⭐ Vienna's Piano Concert ⭐")
                         .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundColor(NeonColors.gold)
                         .padding(.top, 12)

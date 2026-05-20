@@ -1,4 +1,4 @@
-# Vienna's Neon Piano Quest 🎹✨
+# Vienna's Piano 🎹✨
 
 A pink, neon, K-pop-inspired piano-learning iPad app for a six-year-old. Built entirely in SwiftUI with programmatic audio synthesis — no bundled sound files required.
 
@@ -264,7 +264,7 @@ In the Xcode toolbar device picker, choose one of:
 
 Press **⌘R** (or click the ▶ button). Xcode will compile the project, boot the simulator, and install the app.
 
-You should see the neon home screen with the "Vienna's Neon Piano Quest" title, bouncing mascot characters, and a large pink Play button.
+You should see the neon home screen with the "Vienna's Piano" title, bouncing mascot characters, and a large pink Play button.
 
 ### 4. What to test
 

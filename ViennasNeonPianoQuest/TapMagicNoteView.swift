@@ -273,7 +273,7 @@ struct TapMagicNoteView: View {
                     .font(.system(size: 22, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
 
-                Text(hitCount == totalNotes ? "PERFECT! You're a superstar! ⭐" : "Great job, Vienna! 💖")
+                Text(hitCount == totalNotes ? "PERFECT! You're a superstar! ⭐" : "Great job! 💖")
                     .font(.system(size: 20, weight: .medium, design: .rounded))
                     .foregroundColor(NeonColors.bubblegum)
 
