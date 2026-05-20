@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Vienna's Piano 🎹✨</title>
+<!-- PWA: fullscreen home-screen app on iPad -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vienna's Piano">
+<meta name="theme-color" content="#0f0326">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230f0326' width='100' height='100' rx='20'/><text y='68' x='50' text-anchor='middle' font-size='55'>🎹</text></svg>">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --hot-pink: #ff1493;
+    --bubblegum: #ff69b4;
+    --purple: #b000ff;
+    --cyan: #00ffff;
+    --neon-blue: #0080ff;
+    --gold: #ffd700;
+    --violet: #d900ff;
+    --dark-stage: #0f0326;
+    --dark-purple: #1e0a3e;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, var(--dark-stage), var(--dark-purple), #000);
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* ===== SCREENS ===== */
+  .screen { display: none; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; position: relative; }
+  .screen.active { display: flex; }
+
+  /* ===== SPARKLE CANVAS ===== */
+  #sparkle-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ===== SPOTLIGHTS ===== */
+  .spotlight {
+    position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0;
+  }
+  .spot1 { width: 400px; height: 400px; background: rgba(255,20,147,0.08); top: 10%; left: 10%; }
+  .spot2 { width: 350px; height: 350px; background: rgba(217,0,255,0.07); top: 20%; right: 10%; }
+  .spot3 { width: 300px; height: 300px; background: rgba(0,255,255,0.06); bottom: 20%; left: 40%; }
+
+  /* ===== HOME SCREEN ===== */
+  .title-emoji { font-size: 64px; animation: float 2s ease-in-out infinite; }
+  .title {
+    font-size: clamp(36px, 6vw, 60px); font-weight: 900;
+    background: linear-gradient(90deg, var(--hot-pink), var(--purple), var(--neon-blue), var(--cyan), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 20px rgba(255,20,147,0.5));
+    animation: title-glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes title-glow {
+    from { filter: drop-shadow(0 0 20px rgba(255,20,147,0.5)); }
+    to   { filter: drop-shadow(0 0 35px rgba(217,0,255,0.6)); }
+  }
+
+  .mascots { display: flex; gap: 20px; margin: 16px 0; flex-wrap: wrap; justify-content: center; }
+  .mascot {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    animation: bounce 1s ease-in-out infinite alternate;
+  }
+  .mascot:nth-child(2) { animation-delay: 0.15s; }
+  .mascot:nth-child(3) { animation-delay: 0.3s; }
+  .mascot:nth-child(4) { animation-delay: 0.45s; }
+  .mascot:nth-child(5) { animation-delay: 0.6s; }
+  .mascot span:first-child { font-size: 44px; }
+  .mascot span:last-child { font-size: 11px; font-weight: 700; opacity: 0.7; }
+
+  @keyframes bounce { to { transform: translateY(-8px); } }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+  .star-count {
+    display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800;
+    color: var(--gold); text-shadow: 0 0 10px rgba(255,215,0,0.5);
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn-big {
+    font-family: 'Nunito', sans-serif; font-size: 22px; font-weight: 900;
+    color: white; border: none; border-radius: 20px; padding: 16px 48px;
+    cursor: pointer; display: flex; align-items: center; gap: 10px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 0 20px rgba(255,20,147,0.4);
+  }
+  .btn-big:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(255,20,147,0.6); }
+  .btn-big:active { transform: scale(0.95); }
+  .btn-big.pink { background: linear-gradient(135deg, var(--hot-pink), var(--violet)); }
+  .btn-big.purple { background: linear-gradient(135deg, var(--purple), var(--neon-blue)); }
+  .btn-big.cyan { background: linear-gradient(135deg, var(--cyan), var(--neon-blue)); color: #000; }
+
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+  .btn-small {
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
+    color: white; border: none; border-radius: 16px; padding: 12px 16px;
+    cursor: pointer; display: flex; flex-direction: column; align-items: center;
+    gap: 4px; min-width: 100px;
+    transition: transform 0.15s; border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-small:hover { transform: scale(1.05); }
+  .btn-small:active { transform: scale(0.93); }
+  .btn-small span:first-child { font-size: 26px; }
+
+  .btn-back {
+    font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800;
+    color: var(--bubblegum); background: rgba(255,255,255,0.08); border: none;
+    border-radius: 20px; padding: 8px 16px; cursor: pointer;
+    position: absolute; top: 16px; left: 16px; z-index: 10;
+  }
+  .btn-back:hover { background: rgba(255,255,255,0.15); }
+
+  /* ===== PIANO ===== */
+  .piano-container {
+    display: flex; justify-content: center; gap: 6px; padding: 12px;
+    background: rgba(0,0,0,0.3); border-radius: 20px; margin-top: auto;
+    width: 100%; max-width: 800px;
+  }
+  .piano-key {
+    width: clamp(60px, 12vw, 100px); height: 160px;
+    border-radius: 14px; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end; padding-bottom: 16px;
+    gap: 6px; cursor: pointer; transition: transform 0.1s, box-shadow 0.15s;
+    border: none; font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #fff, #f0f0f0);
+    position: relative;
+  }
+  .piano-key:active, .piano-key.pressed {
+    transform: scale(0.93);
+  }
+  .piano-key .dot {
+    width: 18px; height: 18px; border-radius: 50%;
+  }
+  .piano-key .label {
+    font-size: 24px; font-weight: 900;
+  }
+  .piano-key.pressed .label { color: white !important; }
+
+  /* per-note colours */
+  .key-C  { --nc: #ff1493; } .key-C .dot { background: #ff1493; } .key-C .label { color: #ff1493; }
+  .key-D  { --nc: #ff69b4; } .key-D .dot { background: #ff69b4; } .key-D .label { color: #ff69b4; }
+  .key-E  { --nc: #b000ff; } .key-E .dot { background: #b000ff; } .key-E .label { color: #b000ff; }
+  .key-F  { --nc: #00ffff; } .key-F .dot { background: #00ffff; } .key-F .label { color: #00ffff; }
+  .key-G  { --nc: #0080ff; } .key-G .dot { background: #0080ff; } .key-G .label { color: #0080ff; }
+  .key-A  { --nc: #d900ff; } .key-A .dot { background: #d900ff; } .key-A .label { color: #d900ff; }
+  .key-B  { --nc: #ffd700; } .key-B .dot { background: #ffd700; } .key-B .label { color: #ffd700; }
+
+  .piano-key.pressed {
+    background: linear-gradient(180deg, var(--nc), color-mix(in srgb, var(--nc) 70%, black)) !important;
+    box-shadow: 0 0 25px var(--nc), 0 0 50px color-mix(in srgb, var(--nc) 50%, transparent);
+  }
+  .piano-key.highlight {
+    box-shadow: 0 0 20px var(--nc), 0 0 40px color-mix(in srgb, var(--nc) 40%, transparent);
+    animation: key-pulse 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes key-pulse {
+    from { box-shadow: 0 0 15px var(--nc); }
+    to   { box-shadow: 0 0 30px var(--nc), 0 0 50px color-mix(in srgb, var(--nc) 40%, transparent); }
+  }
+
+  /* ===== GAME AREA ===== */
+  #game-area {
+    width: 100%; max-width: 800px; height: 380px; position: relative;
+    overflow: hidden; border-radius: 16px;
+    background: rgba(0,0,0,0.2);
+  }
+  .hit-line {
+    position: absolute; bottom: 40px; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--hot-pink), var(--purple), var(--neon-blue), var(--cyan), var(--gold));
+    border-radius: 2px; box-shadow: 0 0 12px var(--hot-pink);
+  }
+  .note-bubble {
+    position: absolute; width: 52px; height: 52px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; color: white;
+    border: 2px solid rgba(255,255,255,0.5);
+    transition: none; pointer-events: none;
+  }
+  .note-bubble::before {
+    content: ''; position: absolute; inset: -8px; border-radius: 50%;
+    background: inherit; opacity: 0.3; filter: blur(10px); z-index: -1;
+  }
+
+  /* ===== FEEDBACK ===== */
+  .feedback {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 42px; font-weight: 900; pointer-events: none; z-index: 100;
+    background: linear-gradient(90deg, var(--hot-pink), var(--bubblegum), var(--violet));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(255,20,147,0.8));
+    animation: feedback-pop 0.8s ease-out forwards;
+  }
+  @keyframes feedback-pop {
+    0%   { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+    50%  { transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0; transform: translate(-50%, -70%) scale(1); }
+  }
+
+  .score-display {
+    display: flex; align-items: center; gap: 8px; font-size: 20px;
+    font-weight: 800; color: var(--gold);
+    text-shadow: 0 0 10px rgba(255,215,0,0.4);
+    position: absolute; top: 16px; right: 16px; z-index: 10;
+  }
+
+  /* ===== FREE PLAY SPARKLE ===== */
+  .play-sparkle {
+    position: absolute; pointer-events: none; font-size: 28px;
+    animation: sparkle-rise 1.2s ease-out forwards;
+  }
+  @keyframes sparkle-rise {
+    0%   { opacity: 1; transform: scale(0.5) translateY(0); }
+    100% { opacity: 0; transform: scale(1.5) translateY(-80px) rotate(20deg); }
+  }
+
+  /* ===== LEVEL SELECT ===== */
+  .stages { display: flex; gap: 24px; overflow-x: auto; padding: 20px; max-width: 100%; }
+  .stage-card {
+    min-width: 240px; padding: 20px; border-radius: 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    border: 2px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+  }
+  .stage-card h3 { font-size: 18px; font-weight: 900; text-shadow: 0 0 10px currentColor; }
+  .level-btn {
+    font-family: 'Nunito', sans-serif;
+    width: 100%; padding: 10px 14px; border-radius: 12px; border: none;
+    display: flex; align-items: center; gap: 10px; cursor: pointer;
+    font-size: 14px; font-weight: 800; color: white;
+    transition: transform 0.15s;
+  }
+  .level-btn:hover { transform: scale(1.03); }
+  .level-btn .num {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900;
+  }
+  .level-btn.locked { opacity: 0.4; cursor: default; }
+  .level-btn.locked .num { background: rgba(255,255,255,0.2); }
+
+  /* ===== GAME OVER ===== */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 50;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .overlay-card {
+    background: var(--dark-purple); border-radius: 28px; padding: 40px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    box-shadow: 0 0 40px rgba(255,20,147,0.3);
+    max-width: 440px; text-align: center;
+  }
+  .overlay-card .emoji { font-size: 64px; }
+  .overlay-card h2 {
+    font-size: 32px; font-weight: 900;
+    background: linear-gradient(90deg, var(--hot-pink), var(--bubblegum), var(--violet));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stars { font-size: 28px; letter-spacing: 4px; }
+  .stars .off { opacity: 0.25; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .piano-key { width: 44px; height: 120px; }
+    .piano-key .label { font-size: 18px; }
+    #game-area { height: 280px; }
+    .note-bubble { width: 40px; height: 40px; font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sparkle-canvas"></canvas>
+<div class="spotlight spot1"></div>
+<div class="spotlight spot2"></div>
+<div class="spotlight spot3"></div>
+
+<!-- ===== HOME SCREEN ===== -->
+<div id="home" class="screen active">
+  <div style="height: 24px"></div>
+  <div class="title-emoji">🎹</div>
+  <div class="title">Vienna's Piano</div>
+
+  <div class="mascots">
+    <div class="mascot"><span>👩‍🎤</span><span>DJ Vienna</span></div>
+    <div class="mascot"><span>🐰</span><span>Melody Bunny</span></div>
+    <div class="mascot"><span>🐱</span><span>Bass Cat</span></div>
+    <div class="mascot"><span>🐼</span><span>Sparkle Panda</span></div>
+    <div class="mascot"><span>🦊</span><span>Rhythm Fox</span></div>
+  </div>
+
+  <div class="star-count">⭐ <span id="total-stars">0</span> Stars</div>
+
+  <div style="height: 16px"></div>
+  <button class="btn-big pink" onclick="showScreen('levels')">🎮 Play</button>
+  <div style="height: 12px"></div>
+  <div class="btn-row">
+    <button class="btn-small" style="background:rgba(176,0,255,0.6)" onclick="showScreen('freeplay')"><span>🎹</span>Free Play</button>
+    <button class="btn-small" style="background:rgba(0,128,255,0.6)" onclick="startGame(0)"><span>🎮</span>Quick Play</button>
+    <button class="btn-small" style="background:rgba(0,255,255,0.3)" onclick="showScreen('freeplay')"><span>🎵</span>Learn Notes</button>
+    <button class="btn-small" style="background:rgba(255,215,0,0.3)" onclick="showScreen('stickers')"><span>⭐</span>Stickers</button>
+  </div>
+</div>
+
+<!-- ===== LEVEL SELECT ===== -->
+<div id="levels" class="screen">
+  <button class="btn-back" onclick="showScreen('home')">← Back</button>
+  <div style="height: 48px"></div>
+  <div class="title" style="font-size: 28px">Choose Your Stage!</div>
+  <div class="stages" id="stages-container"></div>
+</div>
+
+<!-- ===== GAME SCREEN ===== -->
+<div id="game" class="screen">
+  <button class="btn-back" onclick="endGameEarly()">← Back</button>
+  <div class="score-display">⭐ <span id="game-score">0</span></div>
+  <div style="height: 48px"></div>
+  <div id="level-title" style="font-size: 18px; font-weight: 800; color: var(--bubblegum);"></div>
+  <div style="height: 8px"></div>
+  <div id="game-area">
+    <div class="hit-line"></div>
+  </div>
+  <div id="game-piano" class="piano-container"></div>
+</div>
+
+<!-- ===== FREE PLAY ===== -->
+<div id="freeplay" class="screen">
+  <button class="btn-back" onclick="showScreen('home')">← Back</button>
+  <div style="height: 48px"></div>
+  <div class="title" style="font-size: 28px">Free Play Piano</div>
+  <div style="color: var(--bubblegum); font-weight: 700; margin: 8px 0;">Play anything you like! 🎵</div>
+  <div id="freeplay-sparkle-area" style="position:relative; width:100%; max-width:800px; height:220px; overflow:hidden; border-radius:16px;">
+    <div class="mascots" style="margin-top: 40px;">
+      <div class="mascot"><span>🐰</span><span></span></div>
+      <div class="mascot"><span>🐱</span><span></span></div>
+      <div class="mascot"><span>🐼</span><span></span></div>
+      <div class="mascot"><span>🦊</span><span></span></div>
+    </div>
+  </div>
+  <div id="freeplay-piano" class="piano-container"></div>
+</div>
+
+<!-- ===== STICKERS ===== -->
+<div id="stickers" class="screen">
+  <button class="btn-back" onclick="showScreen('home')">← Back</button>
+  <div style="height: 48px"></div>
+  <div class="title" style="font-size: 28px">Sticker Room</div>
+  <div style="height: 12px"></div>
+  <div id="sticker-grid" style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; max-width: 600px;"></div>
+</div>
+
+<!-- ===== GAME OVER OVERLAY ===== -->
+<div id="game-over" class="overlay" style="display:none;">
+  <div class="overlay-card">
+    <div class="emoji">🎉</div>
+    <h2>Level Complete!</h2>
+    <div class="stars" id="result-stars"></div>
+    <div id="result-text" style="font-size: 18px; font-weight: 700;"></div>
+    <div style="color: var(--bubblegum); font-size: 17px; font-weight: 700;" id="result-msg"></div>
+    <div class="btn-row">
+      <button class="btn-big purple" onclick="closeOverlay(); showScreen('home');">🏠 Home</button>
+      <button class="btn-big pink" id="btn-next-level">➡️ Next</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== AUDIO ENGINE (Web Audio API) =====
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const NOTE_FREQS = { C: 261.63, D: 293.66, E: 329.63, F: 349.23, G: 392.00, A: 440.00, B: 493.88 };
+const NOTE_COLORS = { C:'#ff1493', D:'#ff69b4', E:'#b000ff', F:'#00ffff', G:'#0080ff', A:'#d900ff', B:'#ffd700' };
+const ALL_NOTES = ['C','D','E','F','G','A','B'];
+
+function playNote(note) {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const freq = NOTE_FREQS[note];
+  const now = audioCtx.currentTime;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const osc2 = audioCtx.createOscillator();
+  const gain2 = audioCtx.createGain();
+
+  osc.type = 'sine'; osc.frequency.value = freq;
+  osc2.type = 'sine'; osc2.frequency.value = freq * 2;
+
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.35, now + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+  gain2.gain.setValueAtTime(0, now);
+  gain2.gain.linearRampToValueAtTime(0.15, now + 0.01);
+  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+  osc.connect(gain).connect(audioCtx.destination);
+  osc2.connect(gain2).connect(audioCtx.destination);
+  osc.start(now); osc.stop(now + 1.3);
+  osc2.start(now); osc2.stop(now + 0.9);
+}
+
+// ===== SPARKLE CANVAS =====
+const canvas = document.getElementById('sparkle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+const SPARKLE_SYMBOLS = ['✨','⭐','💖','🎵','🌟','💜','🎶','💫'];
+function spawnParticle() {
+  particles.push({
+    x: Math.random() * canvas.width, y: canvas.height + 20,
+    vy: -(0.5 + Math.random() * 1.5), vx: (Math.random() - 0.5) * 0.5,
+    size: 12 + Math.random() * 14, opacity: 0.4 + Math.random() * 0.5,
+    symbol: SPARKLE_SYMBOLS[Math.floor(Math.random() * SPARKLE_SYMBOLS.length)],
+    life: 300 + Math.random() * 200
+  });
+}
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles = particles.filter(p => p.life > 0);
+  for (const p of particles) {
+    p.x += p.vx; p.y += p.vy; p.life--;
+    p.opacity = Math.min(p.opacity, p.life / 60);
+    ctx.globalAlpha = p.opacity;
+    ctx.font = `${p.size}px sans-serif`;
+    ctx.fillText(p.symbol, p.x, p.y);
+  }
+  ctx.globalAlpha = 1;
+  if (Math.random() < 0.08) spawnParticle();
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ===== NAVIGATION =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (id === 'levels') buildLevelSelect();
+  if (id === 'freeplay') buildPiano('freeplay-piano', ALL_NOTES, handleFreePlayTap);
+  if (id === 'stickers') buildStickers();
+  if (id === 'home') updateHomeStars();
+}
+
+// ===== LEVELS =====
+const LEVELS = [
+  { id: 'pp1', name: 'First Notes', stage: 'Pink Pop Palace', notes: ['C','D','E'], seq: ['C','D','E','C','E','D','C','E'], thresholds: [3,5,7], boss: '👾 Blobby Bounce', num: 1 },
+  { id: 'pp2', name: 'Three Note Dance', stage: 'Pink Pop Palace', notes: ['C','D','E'], seq: ['E','D','C','D','E','E','E','D','D','E'], thresholds: [4,6,9], boss: '🫠 Wobbly Woo', num: 2 },
+  { id: 'nn1', name: 'Four Note Fun', stage: 'Neon Note City', notes: ['C','D','E','F'], seq: ['C','D','E','F','E','D','C','F','E','C'], thresholds: [4,7,10], boss: '🕺 Shadow Shuffle', num: 3 },
+  { id: 'nn2', name: 'Five Fingers', stage: 'Neon Note City', notes: ['C','D','E','F','G'], seq: ['C','E','G','E','C','D','F','D','G','E','C'], thresholds: [3,5,8], boss: '🍮 Jiggly Jam', num: 4 },
+  { id: 'gm1', name: 'High Notes!', stage: 'Glitter Moon Stage', notes: ['C','D','E','F','G','A'], seq: ['G','A','G','F','E','D','C','E','G','A'], thresholds: [3,5,8], boss: '😵‍💫 Dizzy Doodle', num: 5 },
+  { id: 'gm2', name: 'Almost There!', stage: 'Glitter Moon Stage', notes: ALL_NOTES, seq: ['C','D','E','F','G','A','B','A','G','F','E','D','C'], thresholds: [3,5,8], boss: '👻 Grumble Groove', num: 6 },
+  { id: 'ra1', name: 'K-pop Star!', stage: 'Rainbow Rhythm Arena', notes: ALL_NOTES, seq: ['E','E','F','G','G','F','E','D','C','C','D','E'], thresholds: [3,5,8], boss: '👑 Mega Blob King', num: 7 },
+  { id: 'ra2', name: 'Neon Legend', stage: 'Rainbow Rhythm Arena', notes: ALL_NOTES, seq: ['G','G','A','B','B','A','G','F','E','E','F','G','G','F','F'], thresholds: [3,5,8], boss: '🎧 Shadow DJ', num: 8 },
+];
+const STAGE_COLORS = { 'Pink Pop Palace': 'var(--hot-pink)', 'Neon Note City': 'var(--violet)', 'Glitter Moon Stage': 'var(--cyan)', 'Rainbow Rhythm Arena': 'var(--gold)' };
+const STAGE_EMOJI = { 'Pink Pop Palace': '🏰', 'Neon Note City': '🌆', 'Glitter Moon Stage': '🌙', 'Rainbow Rhythm Arena': '🌈' };
+
+let completedLevels = new Set();
+let totalStars = 0;
+let levelStars = {};
+
+function isLevelUnlocked(lvl) {
+  if (lvl.num === 1) return true;
+  const prev = LEVELS.find(l => l.num === lvl.num - 1);
+  return prev && completedLevels.has(prev.id);
+}
+
+function buildLevelSelect() {
+  const container = document.getElementById('stages-container');
+  container.innerHTML = '';
+  const grouped = {};
+  LEVELS.forEach(l => { (grouped[l.stage] = grouped[l.stage] || []).push(l); });
+  for (const [stage, lvls] of Object.entries(grouped)) {
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+    card.style.background = `color-mix(in srgb, ${STAGE_COLORS[stage]} 15%, transparent)`;
+    card.style.borderColor = `color-mix(in srgb, ${STAGE_COLORS[stage]} 40%, transparent)`;
+    let html = `<div style="font-size:36px">${STAGE_EMOJI[stage]}</div><h3 style="color:${STAGE_COLORS[stage]}">${stage}</h3>`;
+    for (const l of lvls) {
+      const unlocked = isLevelUnlocked(l);
+      const stars = levelStars[l.id] || 0;
+      const starStr = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+      html += `<button class="level-btn ${unlocked ? '' : 'locked'}" style="background:color-mix(in srgb, ${STAGE_COLORS[stage]} 25%, transparent)" ${unlocked ? `onclick="startGame(${LEVELS.indexOf(l)})"` : ''}>
+        <div class="num" style="background:${unlocked ? STAGE_COLORS[stage] : ''}">${unlocked ? l.num : '🔒'}</div>
+        <div><div>${l.name}</div>${completedLevels.has(l.id) ? `<div style="font-size:12px">${starStr}</div>` : (unlocked ? '<div style="font-size:11px;opacity:0.6">Tap to play!</div>' : '')}</div>
+      </button>`;
+    }
+    card.innerHTML = html;
+    container.appendChild(card);
+  }
+}
+
+// ===== PIANO BUILDER =====
+function buildPiano(containerId, notes, callback) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  notes.forEach(note => {
+    const key = document.createElement('button');
+    key.className = `piano-key key-${note}`;
+    key.dataset.note = note;
+    key.innerHTML = `<div class="dot"></div><div class="label">${note}</div>`;
+    key.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      key.classList.add('pressed');
+      playNote(note);
+      callback(note);
+      setTimeout(() => key.classList.remove('pressed'), 150);
+    });
+    container.appendChild(key);
+  });
+}
+
+// ===== FREE PLAY =====
+const FP_EMOJIS = ['✨','⭐','💖','🌟','🎵','💜','🎶','💫','🦋','🌈'];
+function handleFreePlayTap(note) {
+  const area = document.getElementById('freeplay-sparkle-area');
+  const el = document.createElement('div');
+  el.className = 'play-sparkle';
+  el.textContent = FP_EMOJIS[Math.floor(Math.random() * FP_EMOJIS.length)];
+  el.style.left = (20 + Math.random() * 60) + '%';
+  el.style.top = (20 + Math.random() * 60) + '%';
+  el.style.color = NOTE_COLORS[note];
+  area.appendChild(el);
+  setTimeout(() => el.remove(), 1200);
+}
+
+// ===== STICKERS =====
+const STICKERS = [
+  { id: 's1', emoji: '⭐', name: 'Pink Star', unlocked: true },
+  { id: 's2', emoji: '💖', name: 'Neon Heart', req: 1 },
+  { id: 's3', emoji: '🎵', name: 'Golden Note', req: 3 },
+  { id: 's4', emoji: '🌈', name: 'Rainbow', req: 5 },
+  { id: 's5', emoji: '💎', name: 'Diamond', reqStars: 3 },
+  { id: 's6', emoji: '🦋', name: 'Butterfly', reqStars: 8 },
+  { id: 's7', emoji: '💝', name: 'Heart Badge', reqStars: 12 },
+  { id: 's8', emoji: '🏅', name: 'First Song', req: 2 },
+  { id: 's9', emoji: '🌟', name: 'Rhythm Star', req: 6 },
+  { id: 's10', emoji: '🎖️', name: 'Piano Hero', req: 8 },
+  { id: 's11', emoji: '👑', name: 'Sparkle Crown', req: 7 },
+  { id: 's12', emoji: '👑', name: 'Neon Crown', req: 8 },
+];
+
+function buildStickers() {
+  const grid = document.getElementById('sticker-grid');
+  grid.innerHTML = '';
+  STICKERS.forEach(s => {
+    const unlocked = s.unlocked || (s.req && completedLevels.size >= s.req) || (s.reqStars && totalStars >= s.reqStars);
+    const div = document.createElement('div');
+    div.style.cssText = `width:90px;height:100px;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:${unlocked ? 'rgba(255,20,147,0.2)' : 'rgba(255,255,255,0.04)'};cursor:${unlocked ? 'pointer' : 'default'}`;
+    div.innerHTML = `<div style="font-size:32px">${unlocked ? s.emoji : '🔒'}</div><div style="font-size:10px;font-weight:700;opacity:${unlocked ? 1 : 0.3}">${s.name}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ===== GAME ENGINE =====
+let currentLevel = null;
+let gameScore = 0;
+let gameInterval = null;
+let spawnInterval = null;
+let fallingNotes = [];
+let nextNoteIdx = 0;
+let totalGameNotes = 0;
+
+const CELEBRATIONS = ['Amazing! 🌟','Perfect! ⭐','Sparkly! ✨','Superstar! 💖','Incredible! 🎵','Wow! 💜'];
+const ENCOURAGEMENTS = ['Try again, superstar! ⭐','You\'re doing great! 💖','Keep going! ✨','You\'re a natural! 🌟'];
+
+function showFeedback(text) {
+  const el = document.createElement('div');
+  el.className = 'feedback';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
+function startGame(levelIdx) {
+  currentLevel = LEVELS[levelIdx];
+  gameScore = 0; nextNoteIdx = 0; totalGameNotes = 0; fallingNotes = [];
+  document.getElementById('game-score').textContent = '0';
+  document.getElementById('level-title').textContent = `${currentLevel.name} — ${currentLevel.stage}`;
+  document.getElementById('game-area').querySelectorAll('.note-bubble').forEach(n => n.remove());
+
+  buildPiano('game-piano', currentLevel.notes, handleGameTap);
+  showScreen('game');
+
+  spawnInterval = setInterval(() => {
+    if (nextNoteIdx >= currentLevel.seq.length) {
+      clearInterval(spawnInterval);
+      // Check if all notes done
+      setTimeout(() => {
+        if (fallingNotes.every(n => !n.active)) finishLevel();
+      }, 2000);
+      return;
+    }
+    spawnNote(currentLevel.seq[nextNoteIdx]);
+    nextNoteIdx++;
+    totalGameNotes++;
+  }, 1100);
+
+  gameInterval = setInterval(updateGame, 16);
+}
+
+function spawnNote(note) {
+  const area = document.getElementById('game-area');
+  const el = document.createElement('div');
+  el.className = 'note-bubble';
+  el.style.background = NOTE_COLORS[note];
+  el.textContent = note;
+
+  const noteIdx = currentLevel.notes.indexOf(note);
+  const totalNotes = currentLevel.notes.length;
+  const areaWidth = area.offsetWidth;
+  const x = ((noteIdx + 0.5) / totalNotes) * (areaWidth - 60) + 10;
+  el.style.left = x + 'px';
+  el.style.top = '-60px';
+  area.appendChild(el);
+
+  fallingNotes.push({ el, note, y: -60, active: true, hit: false });
+
+  // Highlight matching key
+  const keys = document.querySelectorAll('#game-piano .piano-key');
+  keys.forEach(k => k.classList.remove('highlight'));
+  const matchKey = Array.from(keys).find(k => k.dataset.note === note);
+  if (matchKey) matchKey.classList.add('highlight');
+}
+
+function updateGame() {
+  const hitY = document.getElementById('game-area').offsetHeight - 60;
+  const missY = document.getElementById('game-area').offsetHeight + 10;
+
+  for (const n of fallingNotes) {
+    if (!n.active) continue;
+    n.y += 2.8;
+    n.el.style.top = n.y + 'px';
+
+    if (n.y > missY && !n.hit) {
+      n.active = false;
+      n.el.style.opacity = '0';
+      showFeedback(ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]);
+    }
+  }
+
+  // Check if game ended
+  if (nextNoteIdx >= currentLevel.seq.length && fallingNotes.every(n => !n.active)) {
+    finishLevel();
+  }
+}
+
+function handleGameTap(note) {
+  const hitY = document.getElementById('game-area').offsetHeight - 60;
+  const match = fallingNotes.find(n =>
+    n.active && !n.hit && n.note === note &&
+    n.y > hitY - 80 && n.y < hitY + 50
+  );
+  if (match) {
+    match.hit = true; match.active = false;
+    match.el.style.transition = 'transform 0.2s, opacity 0.2s';
+    match.el.style.transform = 'scale(1.5)'; match.el.style.opacity = '0';
+    gameScore++;
+    document.getElementById('game-score').textContent = gameScore;
+    showFeedback(CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)]);
+  } else {
+    showFeedback(ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]);
+  }
+}
+
+function finishLevel() {
+  clearInterval(gameInterval); clearInterval(spawnInterval);
+  gameInterval = null; spawnInterval = null;
+
+  const [t1, t2, t3] = currentLevel.thresholds;
+  let stars = 1;
+  if (gameScore >= t3) stars = 3;
+  else if (gameScore >= t2) stars = 2;
+
+  const prevStars = levelStars[currentLevel.id] || 0;
+  if (stars > prevStars) {
+    totalStars += (stars - prevStars);
+    levelStars[currentLevel.id] = stars;
+  }
+  completedLevels.add(currentLevel.id);
+
+  const starStr = '<span>⭐</span>'.repeat(stars) + '<span class="off">☆</span>'.repeat(3 - stars);
+  document.getElementById('result-stars').innerHTML = starStr;
+  document.getElementById('result-text').textContent = `You hit ${gameScore} out of ${totalGameNotes} notes!`;
+  document.getElementById('result-msg').textContent = gameScore === totalGameNotes ? "PERFECT! You're a superstar! ⭐" : "Great job! 💖";
+
+  const nextIdx = LEVELS.indexOf(currentLevel) + 1;
+  const btnNext = document.getElementById('btn-next-level');
+  if (nextIdx < LEVELS.length) {
+    btnNext.style.display = ''; btnNext.onclick = () => { closeOverlay(); startGame(nextIdx); };
+  } else {
+    btnNext.style.display = 'none';
+  }
+
+  document.getElementById('game-over').style.display = 'flex';
+}
+
+function endGameEarly() {
+  clearInterval(gameInterval); clearInterval(spawnInterval);
+  gameInterval = null; spawnInterval = null;
+  showScreen('home');
+}
+
+function closeOverlay() { document.getElementById('game-over').style.display = 'none'; }
+function updateHomeStars() { document.getElementById('total-stars').textContent = totalStars; }
+</script>
+</body>
+</html>
