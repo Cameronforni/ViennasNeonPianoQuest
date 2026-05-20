@@ -1,0 +1,459 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		05A43C23787BF23B759D8E1E /* ParentSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357D9FCE08C18A8D665922F4 /* ParentSettingsView.swift */; };
+		0D6ACEB3FC53D83F5F75DAEA /* FreePlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6B625D3C7E5F91B0D80DF46 /* FreePlayView.swift */; };
+		15D44DE51F2F742A893777A6 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74AECE841AD4651514C29305 /* GameState.swift */; };
+		29C58752BA00C649B6C3AB35 /* ViennasNeonPianoQuestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E783F2AE441323431302524A /* ViennasNeonPianoQuestApp.swift */; };
+		4B46CA534B3678728A60BEE8 /* ViennasNeonPianoQuestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B3B7DEEA8BD66378A887C76 /* ViennasNeonPianoQuestTests.swift */; };
+		61A1495EA3DB3DACCC1FD16A /* TapMagicNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05BBBC86B70E403205791A8C /* TapMagicNoteView.swift */; };
+		6C701EE3D43D583163B2B390 /* NeonTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFDC4ABBE74DABCDA1F9D8E9 /* NeonTheme.swift */; };
+		78BAC95E6AE361C6904487D8 /* RescueMelodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AF182EDC803FDCC7670242 /* RescueMelodyView.swift */; };
+		8A9E8A241168664474A4C023 /* GameModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCF4173A37B31D022801E4A1 /* GameModels.swift */; };
+		9096C24AEEE361E3FA7C5DA9 /* NoteModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710B81DDAACD3B62CF1404BE /* NoteModel.swift */; };
+		9C3D35B3F1E4F3AE82449FDA /* RhythmStageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9138B50C21F3950F24005464 /* RhythmStageView.swift */; };
+		9ECC97ACB940A4EC4F3005C2 /* PianoKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5F7B042AFAA9B3208CFF59 /* PianoKeyboardView.swift */; };
+		B4B052F6298D15CD84C7920B /* HomeScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E6E71B02210E45FA5EA1EA1 /* HomeScreenView.swift */; };
+		C670BEE585A5C846FAF71664 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D678CA709DB002D3FC01B9A4 /* AudioEngine.swift */; };
+		CE0C3EA5F30BD11E5EA3817D /* BossBattleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E217368888EBD581843A8E81 /* BossBattleView.swift */; };
+		D761BCBEA6B4CC830ED360BA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F74736799A06E84A7D899D27 /* ContentView.swift */; };
+		DD6537DE4C66D7F3E3F67E07 /* StickerRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96CD8472C1D018A2AC91479B /* StickerRoomView.swift */; };
+		EEC95AFB5729BFBF0CF725B5 /* LevelSelectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252F4F9735CB19FAD7B66704 /* LevelSelectView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		422AFE33EE202DA9805A1CD6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B6B7546DEC520968A8D02D6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B4253983A77A7243F58245EA;
+			remoteInfo = ViennasNeonPianoQuest;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		05BBBC86B70E403205791A8C /* TapMagicNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapMagicNoteView.swift; sourceTree = "<group>"; };
+		1D5F7B042AFAA9B3208CFF59 /* PianoKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoKeyboardView.swift; sourceTree = "<group>"; };
+		252F4F9735CB19FAD7B66704 /* LevelSelectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectView.swift; sourceTree = "<group>"; };
+		357D9FCE08C18A8D665922F4 /* ParentSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentSettingsView.swift; sourceTree = "<group>"; };
+		3E6E71B02210E45FA5EA1EA1 /* HomeScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenView.swift; sourceTree = "<group>"; };
+		710B81DDAACD3B62CF1404BE /* NoteModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteModel.swift; sourceTree = "<group>"; };
+		74AECE841AD4651514C29305 /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		79AF182EDC803FDCC7670242 /* RescueMelodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RescueMelodyView.swift; sourceTree = "<group>"; };
+		9138B50C21F3950F24005464 /* RhythmStageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RhythmStageView.swift; sourceTree = "<group>"; };
+		96CD8472C1D018A2AC91479B /* StickerRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerRoomView.swift; sourceTree = "<group>"; };
+		9B3B7DEEA8BD66378A887C76 /* ViennasNeonPianoQuestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViennasNeonPianoQuestTests.swift; sourceTree = "<group>"; };
+		AEAD87D48BB02256E297DC12 /* ViennasNeonPianoQuestTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ViennasNeonPianoQuestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF2114ACB5F06F52FE080E6C /* ViennasNeonPianoQuest.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ViennasNeonPianoQuest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6B625D3C7E5F91B0D80DF46 /* FreePlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreePlayView.swift; sourceTree = "<group>"; };
+		D678CA709DB002D3FC01B9A4 /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
+		DCF4173A37B31D022801E4A1 /* GameModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModels.swift; sourceTree = "<group>"; };
+		DFDC4ABBE74DABCDA1F9D8E9 /* NeonTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeonTheme.swift; sourceTree = "<group>"; };
+		E217368888EBD581843A8E81 /* BossBattleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BossBattleView.swift; sourceTree = "<group>"; };
+		E783F2AE441323431302524A /* ViennasNeonPianoQuestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViennasNeonPianoQuestApp.swift; sourceTree = "<group>"; };
+		F74736799A06E84A7D899D27 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1E008A6931CF5A27B1B5D987 /* ViennasNeonPianoQuest */ = {
+			isa = PBXGroup;
+			children = (
+				D678CA709DB002D3FC01B9A4 /* AudioEngine.swift */,
+				E217368888EBD581843A8E81 /* BossBattleView.swift */,
+				F74736799A06E84A7D899D27 /* ContentView.swift */,
+				C6B625D3C7E5F91B0D80DF46 /* FreePlayView.swift */,
+				DCF4173A37B31D022801E4A1 /* GameModels.swift */,
+				74AECE841AD4651514C29305 /* GameState.swift */,
+				3E6E71B02210E45FA5EA1EA1 /* HomeScreenView.swift */,
+				252F4F9735CB19FAD7B66704 /* LevelSelectView.swift */,
+				DFDC4ABBE74DABCDA1F9D8E9 /* NeonTheme.swift */,
+				710B81DDAACD3B62CF1404BE /* NoteModel.swift */,
+				357D9FCE08C18A8D665922F4 /* ParentSettingsView.swift */,
+				1D5F7B042AFAA9B3208CFF59 /* PianoKeyboardView.swift */,
+				79AF182EDC803FDCC7670242 /* RescueMelodyView.swift */,
+				9138B50C21F3950F24005464 /* RhythmStageView.swift */,
+				96CD8472C1D018A2AC91479B /* StickerRoomView.swift */,
+				05BBBC86B70E403205791A8C /* TapMagicNoteView.swift */,
+				E783F2AE441323431302524A /* ViennasNeonPianoQuestApp.swift */,
+			);
+			path = ViennasNeonPianoQuest;
+			sourceTree = "<group>";
+		};
+		96C878C1F312C22D60B03B5F = {
+			isa = PBXGroup;
+			children = (
+				1E008A6931CF5A27B1B5D987 /* ViennasNeonPianoQuest */,
+				E9978F5859E9FC73BDFDBE89 /* ViennasNeonPianoQuestTests */,
+				A5B3370E2F0F2985FB327646 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A5B3370E2F0F2985FB327646 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BF2114ACB5F06F52FE080E6C /* ViennasNeonPianoQuest.app */,
+				AEAD87D48BB02256E297DC12 /* ViennasNeonPianoQuestTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E9978F5859E9FC73BDFDBE89 /* ViennasNeonPianoQuestTests */ = {
+			isa = PBXGroup;
+			children = (
+				9B3B7DEEA8BD66378A887C76 /* ViennasNeonPianoQuestTests.swift */,
+			);
+			path = ViennasNeonPianoQuestTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A974D4531FF58F1A3A88362B /* ViennasNeonPianoQuestTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8EC56181EF616E4077399442 /* Build configuration list for PBXNativeTarget "ViennasNeonPianoQuestTests" */;
+			buildPhases = (
+				2EA70BE2A1CBAD3C65472325 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CE757AD9C357BDF90701DEA4 /* PBXTargetDependency */,
+			);
+			name = ViennasNeonPianoQuestTests;
+			packageProductDependencies = (
+			);
+			productName = ViennasNeonPianoQuestTests;
+			productReference = AEAD87D48BB02256E297DC12 /* ViennasNeonPianoQuestTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B4253983A77A7243F58245EA /* ViennasNeonPianoQuest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24EE857288B328D787ECBCA2 /* Build configuration list for PBXNativeTarget "ViennasNeonPianoQuest" */;
+			buildPhases = (
+				8171C084CE36954984680A9D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ViennasNeonPianoQuest;
+			packageProductDependencies = (
+			);
+			productName = ViennasNeonPianoQuest;
+			productReference = BF2114ACB5F06F52FE080E6C /* ViennasNeonPianoQuest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4B6B7546DEC520968A8D02D6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 82C0B549C67306570F915FB8 /* Build configuration list for PBXProject "ViennasNeonPianoQuest" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 96C878C1F312C22D60B03B5F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A5B3370E2F0F2985FB327646 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B4253983A77A7243F58245EA /* ViennasNeonPianoQuest */,
+				A974D4531FF58F1A3A88362B /* ViennasNeonPianoQuestTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2EA70BE2A1CBAD3C65472325 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B46CA534B3678728A60BEE8 /* ViennasNeonPianoQuestTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8171C084CE36954984680A9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C670BEE585A5C846FAF71664 /* AudioEngine.swift in Sources */,
+				CE0C3EA5F30BD11E5EA3817D /* BossBattleView.swift in Sources */,
+				D761BCBEA6B4CC830ED360BA /* ContentView.swift in Sources */,
+				0D6ACEB3FC53D83F5F75DAEA /* FreePlayView.swift in Sources */,
+				8A9E8A241168664474A4C023 /* GameModels.swift in Sources */,
+				15D44DE51F2F742A893777A6 /* GameState.swift in Sources */,
+				B4B052F6298D15CD84C7920B /* HomeScreenView.swift in Sources */,
+				EEC95AFB5729BFBF0CF725B5 /* LevelSelectView.swift in Sources */,
+				6C701EE3D43D583163B2B390 /* NeonTheme.swift in Sources */,
+				9096C24AEEE361E3FA7C5DA9 /* NoteModel.swift in Sources */,
+				05A43C23787BF23B759D8E1E /* ParentSettingsView.swift in Sources */,
+				9ECC97ACB940A4EC4F3005C2 /* PianoKeyboardView.swift in Sources */,
+				78BAC95E6AE361C6904487D8 /* RescueMelodyView.swift in Sources */,
+				9C3D35B3F1E4F3AE82449FDA /* RhythmStageView.swift in Sources */,
+				DD6537DE4C66D7F3E3F67E07 /* StickerRoomView.swift in Sources */,
+				61A1495EA3DB3DACCC1FD16A /* TapMagicNoteView.swift in Sources */,
+				29C58752BA00C649B6C3AB35 /* ViennasNeonPianoQuestApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CE757AD9C357BDF90701DEA4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B4253983A77A7243F58245EA /* ViennasNeonPianoQuest */;
+			targetProxy = 422AFE33EE202DA9805A1CD6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1CD008E864A295C2779B4BF7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_GENERATION = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vienna.neonpianoquest;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		32BF99B46E8589BF3B35D2BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_GENERATION = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vienna.neonpianoquest;
+				SDKROOT = iphoneos;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Release;
+		};
+		43D5B198A7DBE3AF1911E590 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		5C731009C17FAD146961476D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vienna.ViennasNeonPianoQuestTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViennasNeonPianoQuest.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ViennasNeonPianoQuest";
+			};
+			name = Debug;
+		};
+		A57022A33B52F5D43BC7BB03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		B5E2B6FFE3C62F80A3DFA703 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vienna.ViennasNeonPianoQuestTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViennasNeonPianoQuest.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ViennasNeonPianoQuest";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		24EE857288B328D787ECBCA2 /* Build configuration list for PBXNativeTarget "ViennasNeonPianoQuest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CD008E864A295C2779B4BF7 /* Debug */,
+				32BF99B46E8589BF3B35D2BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		82C0B549C67306570F915FB8 /* Build configuration list for PBXProject "ViennasNeonPianoQuest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A57022A33B52F5D43BC7BB03 /* Debug */,
+				43D5B198A7DBE3AF1911E590 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8EC56181EF616E4077399442 /* Build configuration list for PBXNativeTarget "ViennasNeonPianoQuestTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5C731009C17FAD146961476D /* Debug */,
+				B5E2B6FFE3C62F80A3DFA703 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4B6B7546DEC520968A8D02D6 /* Project object */;
+}

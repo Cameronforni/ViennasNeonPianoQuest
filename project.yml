@@ -1,0 +1,45 @@
+name: ViennasNeonPianoQuest
+options:
+  bundleIdPrefix: com.vienna
+  deploymentTarget:
+    iOS: "16.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: false
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+
+targets:
+  ViennasNeonPianoQuest:
+    type: application
+    platform: iOS
+    sources:
+      - path: ViennasNeonPianoQuest
+        type: group
+    settings:
+      base:
+        INFOPLIST_GENERATION: true
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.vienna.neonpianoquest
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown"
+        INFOPLIST_KEY_UIStatusBarHidden: YES
+        TARGETED_DEVICE_FAMILY: "2"
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: YES
+
+  ViennasNeonPianoQuestTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: ViennasNeonPianoQuestTests
+        type: group
+    dependencies:
+      - target: ViennasNeonPianoQuest
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/ViennasNeonPianoQuest.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ViennasNeonPianoQuest"
