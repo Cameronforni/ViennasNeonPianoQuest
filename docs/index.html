@@ -203,12 +203,56 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 18px; font-weight: 900; color: white;
     border: 2px solid rgba(255,255,255,0.5);
-    transition: none; pointer-events: none;
+    pointer-events: none;
     transform: translateX(-50%);
+    will-change: top, opacity, transform;
   }
   .note-bubble::before {
     content: ''; position: absolute; inset: -8px; border-radius: 50%;
     background: inherit; opacity: 0.3; filter: blur(10px); z-index: -1;
+  }
+  .note-bubble.hit {
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+    transform: translateX(-50%) scale(1.6); opacity: 0;
+  }
+  .note-bubble.missed {
+    transition: opacity 0.3s; opacity: 0;
+  }
+  /* Lane guide lines — faint vertical lines from key to top */
+  .lane-guide {
+    position: absolute; top: 0; bottom: 0; width: 1px;
+    background: rgba(255,255,255,0.06); pointer-events: none;
+    transform: translateX(-0.5px);
+  }
+  /* Countdown overlay */
+  .countdown {
+    position: absolute; inset: 0; display: flex; align-items: center;
+    justify-content: center; z-index: 5; pointer-events: none;
+  }
+  .countdown span {
+    font-size: 72px; font-weight: 900;
+    background: linear-gradient(90deg, var(--hot-pink), var(--violet));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px rgba(255,20,147,0.7));
+    animation: countdown-pop 0.7s ease-out forwards;
+  }
+  @keyframes countdown-pop {
+    0%   { transform: scale(0.3); opacity: 1; }
+    60%  { transform: scale(1.3); }
+    100% { transform: scale(1); opacity: 0; }
+  }
+  /* Progress bar */
+  .game-progress {
+    position: absolute; top: 0; left: 0; height: 3px; z-index: 3;
+    background: linear-gradient(90deg, var(--hot-pink), var(--cyan), var(--gold));
+    border-radius: 2px; transition: width 0.3s;
+  }
+  /* Combo counter */
+  .combo-display {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    font-size: 16px; font-weight: 900; color: var(--bubblegum); z-index: 5;
+    text-shadow: 0 0 8px rgba(255,20,147,0.4);
+    transition: transform 0.15s; pointer-events: none;
   }
 
   /* ===== FEEDBACK ===== */
@@ -347,6 +391,8 @@
   <div id="level-title" style="font-size: 16px; font-weight: 800; color: var(--bubblegum);"></div>
   <div class="game-wrapper">
     <div id="game-area">
+      <div class="game-progress" id="game-progress"></div>
+      <div class="combo-display" id="combo-display"></div>
       <div class="hit-line"></div>
     </div>
     <div id="game-piano" class="piano-container"></div>
@@ -633,17 +679,34 @@ function buildStickers() {
   });
 }
 
-// ===== GAME ENGINE =====
+// ===== GAME ENGINE (requestAnimationFrame + delta-time) =====
 let currentLevel = null;
 let gameScore = 0;
-let gameInterval = null;
-let spawnInterval = null;
-let fallingNotes = [];
-let nextNoteIdx = 0;
+let comboCount = 0;
+let gameRunning = false;
+let gameFinished = false;
+let fallingNotes = [];     // {el, note, y, x, active, hit}
+let noteSchedule = [];     // pre-computed: {note, spawnY (negative offset)}
+let nextSpawnIdx = 0;
 let totalGameNotes = 0;
+let lastFrameTime = 0;
+let keyXPositions = {};    // note -> x pixel position
 
-const CELEBRATIONS = ['Amazing! 🌟','Perfect! ⭐','Sparkly! ✨','Superstar! 💖','Incredible! 🎵','Wow! 💜'];
-const ENCOURAGEMENTS = ['Try again, superstar! ⭐','You\'re doing great! 💖','Keep going! ✨','You\'re a natural! 🌟'];
+// Tuning constants
+const NOTE_SPEED = 220;        // pixels per second
+const SPAWN_INTERVAL = 0.95;   // seconds between notes
+const HIT_WINDOW_EARLY = 80;   // px above hit line where tap counts
+const HIT_WINDOW_LATE  = 35;   // px below hit line where tap still counts
+const COUNTDOWN_SECONDS = 3;
+
+const CELEBRATIONS = [
+  'Amazing! 🌟','Perfect! ⭐','Sparkly! ✨',
+  'Superstar! 💖','Incredible! 🎵','Wow! 💜','Neon hit! 🎶'
+];
+const ENCOURAGEMENTS = [
+  'Try again, superstar! ⭐',"You're doing great! 💖",
+  'Keep going! ✨',"You're a natural! 🌟",'Almost! 💜'
+];
 
 function showFeedback(text) {
   const el = document.createElement('div');
@@ -653,106 +716,210 @@ function showFeedback(text) {
   setTimeout(() => el.remove(), 800);
 }
 
+// Cache the X center of each piano key relative to the game area
+function cacheKeyPositions() {
+  keyXPositions = {};
+  const area = document.getElementById('game-area');
+  if (!area) return;
+  const areaRect = area.getBoundingClientRect();
+  document.querySelectorAll('#game-piano .piano-key').forEach(k => {
+    const r = k.getBoundingClientRect();
+    keyXPositions[k.dataset.note] = r.left + r.width / 2 - areaRect.left;
+  });
+}
+
+// Draw faint vertical lane guides from each key to the top
+function drawLaneGuides() {
+  const area = document.getElementById('game-area');
+  area.querySelectorAll('.lane-guide').forEach(g => g.remove());
+  for (const [note, x] of Object.entries(keyXPositions)) {
+    const guide = document.createElement('div');
+    guide.className = 'lane-guide';
+    guide.style.left = x + 'px';
+    area.appendChild(guide);
+  }
+}
+
+// Pre-schedule all notes with spawn times so they arrive at the hit line on beat
+function buildNoteSchedule() {
+  const area = document.getElementById('game-area');
+  const areaH = area.offsetHeight;
+  // Each note takes (areaH + 60) / NOTE_SPEED seconds to reach the bottom from spawn at -60
+  // We schedule spawnY offsets so notes are evenly spaced in time
+  noteSchedule = currentLevel.seq.map((note, i) => ({
+    note,
+    // y starts at -60 and each subsequent note is one SPAWN_INTERVAL worth of distance apart
+    spawnAtGameY: i * (NOTE_SPEED * SPAWN_INTERVAL)
+    // gameY is a virtual scroll counter; when gameY >= spawnAtGameY, we spawn this note
+  }));
+  totalGameNotes = noteSchedule.length;
+}
+
 function startGame(levelIdx) {
   currentLevel = LEVELS[levelIdx];
-  gameScore = 0; nextNoteIdx = 0; totalGameNotes = 0; fallingNotes = [];
+  gameScore = 0; comboCount = 0; nextSpawnIdx = 0; gameFinished = false;
+  fallingNotes = [];
   document.getElementById('game-score').textContent = '0';
+  document.getElementById('combo-display').textContent = '';
+  document.getElementById('game-progress').style.width = '0%';
   document.getElementById('level-title').textContent = `${currentLevel.name} — ${currentLevel.stage}`;
-  document.getElementById('game-area').querySelectorAll('.note-bubble').forEach(n => n.remove());
+  document.getElementById('game-area').querySelectorAll('.note-bubble, .countdown').forEach(n => n.remove());
 
   buildGamePiano('game-piano', currentLevel.notes, handleGameTap);
   showScreen('game');
 
-  spawnInterval = setInterval(() => {
-    if (nextNoteIdx >= currentLevel.seq.length) {
-      clearInterval(spawnInterval);
-      // Check if all notes done
-      setTimeout(() => {
-        if (fallingNotes.every(n => !n.active)) finishLevel();
-      }, 2000);
-      return;
-    }
-    spawnNote(currentLevel.seq[nextNoteIdx]);
-    nextNoteIdx++;
-    totalGameNotes++;
-  }, 1100);
-
-  gameInterval = setInterval(updateGame, 16);
+  // Wait a frame for layout, then cache positions and start countdown
+  requestAnimationFrame(() => {
+    cacheKeyPositions();
+    drawLaneGuides();
+    buildNoteSchedule();
+    runCountdown(COUNTDOWN_SECONDS, () => {
+      gameRunning = true;
+      lastFrameTime = performance.now();
+      gameScrollY = 0;
+      requestAnimationFrame(gameLoop);
+    });
+  });
 }
 
-function spawnNote(note) {
+let gameScrollY = 0; // virtual scroll distance in pixels
+
+function runCountdown(n, onDone) {
+  if (n <= 0) { onDone(); return; }
   const area = document.getElementById('game-area');
+  const wrap = document.createElement('div');
+  wrap.className = 'countdown';
+  wrap.innerHTML = `<span>${n}</span>`;
+  area.appendChild(wrap);
+  setTimeout(() => { wrap.remove(); runCountdown(n - 1, onDone); }, 700);
+}
+
+// Main game loop — runs via requestAnimationFrame for smooth 60fps
+function gameLoop(now) {
+  if (!gameRunning) return;
+
+  const dt = Math.min((now - lastFrameTime) / 1000, 0.05); // cap at 50ms to avoid spiral
+  lastFrameTime = now;
+  gameScrollY += NOTE_SPEED * dt;
+
+  const area = document.getElementById('game-area');
+  const areaH = area.offsetHeight;
+  const hitY = areaH - 4; // the hit line is at bottom: 0, bubble center should reach here
+
+  // Spawn notes that are due
+  while (nextSpawnIdx < noteSchedule.length) {
+    const sched = noteSchedule[nextSpawnIdx];
+    if (gameScrollY >= sched.spawnAtGameY) {
+      spawnNote(sched.note, area, areaH);
+      nextSpawnIdx++;
+    } else {
+      break;
+    }
+  }
+
+  // Move all active notes
+  for (const n of fallingNotes) {
+    if (!n.active) continue;
+    n.y += NOTE_SPEED * dt;
+    n.el.style.top = n.y + 'px';
+
+    // Missed — went past the hit line + grace window
+    if (n.y > hitY + HIT_WINDOW_LATE && !n.hit) {
+      n.active = false;
+      n.el.classList.add('missed');
+      comboCount = 0;
+      updateCombo();
+      showFeedback(ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]);
+    }
+  }
+
+  // Update progress bar
+  const progress = nextSpawnIdx / totalGameNotes;
+  document.getElementById('game-progress').style.width = (progress * 100) + '%';
+
+  // Update which key is highlighted (next active note)
+  const nextActive = fallingNotes.find(n => n.active && !n.hit);
+  document.querySelectorAll('#game-piano .piano-key').forEach(k => k.classList.remove('highlight'));
+  if (nextActive) {
+    const mk = document.querySelector(`#game-piano .piano-key[data-note="${nextActive.note}"]`);
+    if (mk) mk.classList.add('highlight');
+  }
+
+  // Check if game is over: all notes spawned AND all resolved
+  if (nextSpawnIdx >= totalGameNotes && fallingNotes.every(n => !n.active)) {
+    if (!gameFinished) finishLevel();
+    return;
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+function spawnNote(note, area, areaH) {
   const el = document.createElement('div');
   el.className = 'note-bubble';
   el.style.background = NOTE_COLORS[note] || '#fff';
   el.textContent = note;
 
-  // Align bubble X to the center of the matching piano key
-  const matchKey = document.querySelector(`#game-piano .piano-key[data-note="${note}"]`);
-  const piano = document.getElementById('game-piano');
-  let x = area.offsetWidth / 2; // fallback center
-  if (matchKey && piano) {
-    const keyRect = matchKey.getBoundingClientRect();
-    const areaRect = area.getBoundingClientRect();
-    x = keyRect.left + keyRect.width / 2 - areaRect.left;
-  }
+  const x = keyXPositions[note] || area.offsetWidth / 2;
   el.style.left = x + 'px';
   el.style.top = '-60px';
   area.appendChild(el);
 
   fallingNotes.push({ el, note, y: -60, x, active: true, hit: false });
-
-  // Highlight matching key
-  const keys = document.querySelectorAll('#game-piano .piano-key');
-  keys.forEach(k => k.classList.remove('highlight'));
-  if (matchKey) matchKey.classList.add('highlight');
-}
-
-function updateGame() {
-  const areaH = document.getElementById('game-area').offsetHeight;
-  const hitY = areaH - 26;   // right at the hit line (bottom of game area)
-  const missY = areaH + 30;  // just past the line
-
-  for (const n of fallingNotes) {
-    if (!n.active) continue;
-    n.y += 2.2;
-    n.el.style.top = n.y + 'px';
-
-    if (n.y > missY && !n.hit) {
-      n.active = false;
-      n.el.style.opacity = '0';
-      showFeedback(ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]);
-    }
-  }
-
-  // Check if game ended
-  if (nextNoteIdx >= currentLevel.seq.length && fallingNotes.every(n => !n.active)) {
-    finishLevel();
-  }
 }
 
 function handleGameTap(note) {
-  const areaH = document.getElementById('game-area').offsetHeight;
-  const hitY = areaH - 26;
-  const match = fallingNotes.find(n =>
-    n.active && !n.hit && n.note === note &&
-    n.y > hitY - 100 && n.y < hitY + 40
-  );
-  if (match) {
-    match.hit = true; match.active = false;
-    match.el.style.transition = 'transform 0.2s, opacity 0.2s';
-    match.el.style.transform = 'scale(1.5)'; match.el.style.opacity = '0';
+  if (!gameRunning || gameFinished) return;
+
+  const area = document.getElementById('game-area');
+  const areaH = area.offsetHeight;
+  const hitY = areaH - 4;
+
+  // Find the closest active note matching this key within the hit window
+  let bestMatch = null;
+  let bestDist = Infinity;
+  for (const n of fallingNotes) {
+    if (!n.active || n.hit || n.note !== note) continue;
+    const dist = Math.abs(n.y - hitY);
+    if (n.y > hitY - HIT_WINDOW_EARLY && n.y < hitY + HIT_WINDOW_LATE && dist < bestDist) {
+      bestMatch = n;
+      bestDist = dist;
+    }
+  }
+
+  if (bestMatch) {
+    bestMatch.hit = true;
+    bestMatch.active = false;
+    bestMatch.el.classList.add('hit');
     gameScore++;
+    comboCount++;
     document.getElementById('game-score').textContent = gameScore;
-    showFeedback(CELEBRATIONS[Math.floor(Math.random() * CELEBRATIONS.length)]);
+    updateCombo();
+
+    // Rating based on distance
+    const rating = bestDist < 15 ? 'Perfect! ⭐' : bestDist < 35 ? 'Amazing! 🌟' : 'Great! 💖';
+    showFeedback(rating);
   } else {
+    comboCount = 0;
+    updateCombo();
     showFeedback(ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)]);
   }
 }
 
+function updateCombo() {
+  const el = document.getElementById('combo-display');
+  if (comboCount >= 3) {
+    el.textContent = `${comboCount}x Combo! 🔥`;
+    el.style.transform = 'translateX(-50%) scale(1.15)';
+    setTimeout(() => el.style.transform = 'translateX(-50%) scale(1)', 150);
+  } else {
+    el.textContent = '';
+  }
+}
+
 function finishLevel() {
-  clearInterval(gameInterval); clearInterval(spawnInterval);
-  gameInterval = null; spawnInterval = null;
+  gameRunning = false;
+  gameFinished = true;
 
   const [t1, t2, t3] = currentLevel.thresholds;
   let stars = 1;
@@ -769,7 +936,8 @@ function finishLevel() {
   const starStr = '<span>⭐</span>'.repeat(stars) + '<span class="off">☆</span>'.repeat(3 - stars);
   document.getElementById('result-stars').innerHTML = starStr;
   document.getElementById('result-text').textContent = `You hit ${gameScore} out of ${totalGameNotes} notes!`;
-  document.getElementById('result-msg').textContent = gameScore === totalGameNotes ? "PERFECT! You're a superstar! ⭐" : "Great job! 💖";
+  document.getElementById('result-msg').textContent = gameScore === totalGameNotes
+    ? "PERFECT! You're a superstar! ⭐" : 'Great job! 💖';
 
   const nextIdx = LEVELS.indexOf(currentLevel) + 1;
   const btnNext = document.getElementById('btn-next-level');
@@ -783,8 +951,8 @@ function finishLevel() {
 }
 
 function endGameEarly() {
-  clearInterval(gameInterval); clearInterval(spawnInterval);
-  gameInterval = null; spawnInterval = null;
+  gameRunning = false;
+  gameFinished = true;
   showScreen('home');
 }
 
